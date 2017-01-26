@@ -1,0 +1,92 @@
+body {
+    /*if using the fixed top navbar*/
+    padding-top: 70px;
+}
+
+.bgr_lightGray {
+    background-color: #eee;
+}
+
+.bgr_vlgray {
+    background-color: #f8f8f8;
+}
+
+.color_ogi {
+    color: #e44690;
+}
+
+/* for the line separating the chart selector from the dims values */
+.line-separator{
+    height:10px;
+    border-top : 1px solid #BBBBBB;
+}
+
+/*style for the graph area*/
+.graph {
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.graphAlarm {
+    color: darkred;
+    width: 100%;
+    text-align: center;
+}
+
+.auto-width {
+    width: auto;
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+.padding-top-bottom5 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.spinning {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: 5% auto;
+    margin-left: -30px;
+    margin-top: -30px;
+
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 10px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+}
+
+.errorMessage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin: 5% auto;
+    margin-left: -75px;
+    width: 150px;
+    text-align: center;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* for the graph axis */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
