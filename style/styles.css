@@ -1,5 +1,5 @@
 body {
-    /*if using the fixed top navbar*/
+    /*needed if using the fixed top navbar*/
     padding-top: 70px;
 }
 
@@ -11,6 +11,7 @@ body {
     background-color: #f8f8f8;
 }
 
+/* the opengovintelligence magenta*/
 .color_ogi {
     color: #e44690;
 }
@@ -27,6 +28,7 @@ body {
     margin-top: 20px;
 }
 
+/*for the graph alarm text*/
 .graphAlarm {
     color: darkred;
     width: 100%;
@@ -42,11 +44,13 @@ body {
     visibility: hidden !important;
 }
 
+/* for the horizontal bar with measure and free dimension selectors */
 .padding-top-bottom5 {
     padding-top: 5px;
     padding-bottom: 5px;
 }
 
+/*for the spinner / loader */
 .spinning {
     position: fixed;
     top: 50%;
@@ -55,7 +59,7 @@ body {
     margin-left: -30px;
     margin-top: -30px;
 
-    border: 8px solid #f3f3f3; /* Light grey */
+    border: 8px solid #f3f3f3;      /* Light grey */
     border-top: 10px solid #3498db; /* Blue */
     border-radius: 50%;
     width: 60px;
@@ -63,6 +67,7 @@ body {
     animation: spin 2s linear infinite;
 }
 
+/* for the error message that is presented below the spinner */
 .errorMessage {
     position: fixed;
     top: 50%;
@@ -85,8 +90,25 @@ body {
     stroke: black;
     shape-rendering: crispEdges;
 }
-
 .axis text {
     font-family: sans-serif;
     font-size: 11px;
 }
+
+/*for the dataCircles of the area chart*/
+.dataCircle:hover {
+    fill: orange;
+}
+/* for the pie value labels - in order to make the hidden ones appear */
+.pieTextVisible {
+    display: block !important;
+}
+
+/*for the legend text in pie chart - in order to be not selectable*/
+.unselectable{
+    -webkit-user-select: none;  /* Chrome/Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* IE10+ */
+}
+
+
