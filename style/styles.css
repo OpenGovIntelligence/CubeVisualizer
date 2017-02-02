@@ -3,6 +3,11 @@ body {
     padding-top: 70px;
 }
 
+/*for the datset's name right next to brand name*/
+.navBarTitle {
+    padding-left: 1em;
+}
+
 .bgr_lightGray {
     background-color: #eee;
 }

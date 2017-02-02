@@ -391,7 +391,8 @@ function createAreaChartLinearX(timeFormatString) {
     // subtract the top of the graph element (dynamic), subtract the height of the footer (if any)
     // and also subtract the two margins that are gonna be added later to the svg
     var innerWindowHeight = $(window).height();
-    var graphTop = $("#graph").position().top;
+    //getBoundingClientRect().top is relative to window
+    var graphTop = d3.select("#graph").node().getBoundingClientRect().top;
     var height = innerWindowHeight - graphTop - uiConfig.footerSize - margin.top - margin.bottom;
     //in case it is small or negative (eg mobile phone > of screen) retain a minimum height
     if (height < areaConfig.areaChartMinHeight) {
@@ -413,12 +414,20 @@ function createAreaChartLinearX(timeFormatString) {
     */
 
     //lineObservations will be used as data for the chart
-    var lineObservations = _observations.map(function(d) {
-        var obs = {};
-        obs['time'] = parseDate(d[CKEYS.dimLabel]);      //Parse the date
-        obs['value'] = +d[CKEYS.measObs];
-        return obs;
-    });
+    var lineObservations = _observations
+        .filter(function(d) {
+            if (parseDate(d[CKEYS.dimLabel])) {             //If it is a valid date / time
+                return true;
+            } else {                //Else ignore data points with free dimension values that are not
+                return false;       // valid dates (e.g 'unknown date').
+            }
+        })
+        .map(function(d) {
+            var obs = {};
+            obs['time'] = parseDate(d[CKEYS.dimLabel]);     //Parse the date
+            obs['value'] = +d[CKEYS.measObs];
+            return obs;
+        });
 
     //Sort array (otherwise time scale is not working correctly)
     lineObservations.sort(function(a,b){
@@ -690,7 +699,8 @@ function createBarChartOrdinalX() {
     // and subtract the top of the graph element (dynamic), subtract the height of the footer (if any)
     // and also subtract the two margins that are going to be added later to the svg
     var innerWindowHeight = $(window).height();
-    var graphTop = $("#graph").position().top;
+    //getBoundingClientRect().top is relative to window
+    var graphTop = d3.select("#graph").node().getBoundingClientRect().top;
     var height = innerWindowHeight - graphTop - uiConfig.footerSize - margin.top - margin.bottom;
     //In case it is small or negative (eg mobile phone > of screen) retain a minimum height
     if (height < barConfig.barChartMinHeight) {
@@ -911,28 +921,54 @@ function createPieChart(sorting) {
         'bottom'    : pieConfig.marginBottom
     };
 
-    var legendWidth = pieConfig.legendDefaultWidth;
-    //Get the #graph div's width
-    var width = $('#graph').width() - margin.left - margin.right - legendWidth;
+    //Create two responsive divs inside the container
+    //The padding is inherited form parent div
+    d3.select("#graph")
+        .append("div")
+        .attr("id", "pieDiv")
+        .classed("col-sm-9 col-xs-12", true);
+
+    d3.select("#graph")
+        .append("div")
+        .attr("id", "legendDiv")
+        .classed("col-sm-3 col-xs-12", true);
+
+    //The .width() method is not totally accurate due to responsive divs
+    // (it's close though) (innerWidth / outerWidth are not suitable: they include padding)
+    //Get the pie div's width and subtract the internal custom margins
+    var pieWidth = $("#pieDiv").width() - margin.left - margin.right;
 
     //Find the current browser window height (depends on browser's zoom scale!)
-    // and subtract the top of the graph element (dynamic), subtract the height of the footer (if any)
+    // and subtract the top of the pie div (dynamic), subtract the height of the footer (if any)
     // and also subtract the two margins that are gonna be added later to the svg
     var innerWindowHeight = $(window).height();
-    var graphTop = $("#graph").position().top;
-    var height = innerWindowHeight - graphTop - uiConfig.footerSize - margin.top - margin.bottom;
+    var pieTop = d3.select("#pieDiv").node().getBoundingClientRect().top;   //Distance to top of window
+    var pieHeight = innerWindowHeight - pieTop - uiConfig.footerSize - margin.top - margin.bottom;
     //In case it is small or negative (eg mobile phone > of screen) retain a minimum height
-    if (height < pieConfig.pieChartMinimumHeight) {
-        height = pieConfig.pieChartMinimumHeight;
+    if (pieHeight < pieConfig.pieChartMinimumHeight) {
+        pieHeight = pieConfig.pieChartMinimumHeight;
     }
 
+    //In pie chart width is automatic (responsive design), so we should't intervene
+    /*
     //Retain a minimum width
     if (width < pieConfig.pieChartMinimumWidth) {
-        height = pieConfig.pieChartMinimumWidth;
+        width = pieConfig.pieChartMinimumWidth;
     }
+    */
+
+    //Make the div containing the legend scrollable and fix the height (same as pie's svg)
+    //Its width is automatically set by bootstrap
+    $("#legendDiv")
+        .css({
+            overflowY:          'scroll',
+            overflowX:          'scroll',
+            maxHeight:          pieHeight + margin.top + margin.bottom ,
+            height:             pieHeight + margin.top + margin.bottom
+        });
 
     //Find the smallest between width and height
-    var smallAxis = (width < height) ? width : height;
+    var smallAxis = (pieWidth < pieHeight) ? pieWidth : pieHeight;
 
     var outerRadius = smallAxis / 2;
     var innerRadius = smallAxis / 4;
@@ -948,90 +984,43 @@ function createPieChart(sorting) {
                                 // in order to be able to sort also the legend labels!)
         .value(function(d) { return d[CKEYS.measObs]; })(pieObservations);
 
-    var svg = d3.select("#graph")
+    //create the svg that will contain the pie elements
+    var pieSvg = d3.select("#pieDiv")
         .classed("bgr_vlgray", true)
         .append("svg")
-        .attr("width", width + margin.left + margin.right + legendWidth)
-        .attr("height", height + margin.top +margin.bottom);
+        .attr("width", pieWidth + margin.left + margin.right)
+        .attr("height", pieHeight + margin.top +margin.bottom);
 
-
-    //Create the legend --------------------------------
-    var legendGroup = svg.append("g")
-            .attr("id", "legendGroup");
-    var legend = legendGroup
-        .selectAll("g")
-        .data(pieObservations)
-        .enter().append("g")
-        .attr("transform", function(d, i) {
-            return "translate(0," + i * pieConfig.legendPerLabelHeight + ")";
-        });
-
-    legend.append("rect")
-        .attr("width", pieConfig.legendColorRectWidth)
-        .attr("height", pieConfig.legendColorRectHeight)
-        .style("fill", function(d, i) {
-            return d3.schemeCategory20[colorIndex[i]%20];       //%20 is needed, otherwise i>20 -> black
-        });
-
-    legend.append("text")
-        .attr("x", pieConfig.legendColorRectWidth + 6)
-        .attr("y", pieConfig.legendColorRectHeight / 2)
-        .attr("dy", ".35em")
-        .attr("font-family" , pieConfig.legendTextFontFamily)
-        .attr("font-size", pieConfig.legendTextFontSize)
-        .attr("fill", pieConfig.legendTextFill)
-        //The legend text can't be selected so that a user could
-        // (TODO) drag the legend up and down (if it doesn't fit)
-        .classed("unselectable", true)
-        .text(function(d,i ) { return d[CKEYS.dimLabel]; })
-        //Add mouseover functionality to legend text (highlight the appropriate pie area)
-        .on("mouseover", function(d, i) {
-            d3.select(this)
-                .attr("fill", 'orange');
-            d3.select("#path"+i)
-                .attr("fill", pieConfig.pieAreaHighlightColor);   //Change the color of the pie area to gain attention
-            d3.select('#pieText'+i)
-                .classed("pieTextVisible", true)
-                .attr("fill", pieConfig.valueTextHighlightColor);
-        })
-        .on("mouseout", function(d, i) {
-            d3.select(this)
-                .attr("fill", pieConfig.legendTextFill);
-            d3.select("#path"+i)
-                .attr("fill", d3.schemeCategory20[colorIndex[i]%20]);   //Restore the color of the pie area
-            d3.select('#pieText'+i)
-                .classed("pieTextVisible", false)                       //Restore the original visibility
-                .attr("fill", pieConfig.valueTextFill);                 //Restore the original color
-        });
-
-    //------------------------------------------
+    //Create the svg that will contain the legend elements
+    //After creating the legend elements, we will specify the width & height of svg according to the elements
+    var legendSvg = d3.select("#legendDiv")
+        .classed("bgr_vlgray", true)
+        .append("svg")
+        .attr("transform", "translate(0, " + margin.top + ")"); //move down margin.top pixels
 
     //Create the clipping path (mask) for the pie
-    svg.append("defs").append("clipPath")
+    pieSvg.append("defs").append("clipPath")
         .attr("id", "clipPie")
         .append("rect")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", pieWidth)
+        .attr("height", pieHeight);
 
-    //Set up a rectangular group that has a clipping mask
-    var rGroup = svg.append("g")
+    //Set up a rectangular group that has a clipping mask and is transformed according to margins
+    var pieGroup = pieSvg.append("g")
         .attr("id", "boxAroundPie")
-        .attr("width", width )
-        .attr("height", height)
-        .attr("transform", "translate(" + (margin.left + legendWidth) + "," + margin.top + ")")
+        .attr("width", pieWidth )
+        .attr("height", pieHeight)
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .attr("clip-path", "url(#clipPie)");
-
-    var pieGroup = rGroup.append("g") //This group will contain pie areas
-        .attr("width", width )
-        .attr("height", height);
 
     var arcs = pieGroup.selectAll("g.arc")
         .data(pie)
         .enter()
         .append("g")
         .attr("class", "arc")
-        .attr("transform", "translate(" + (width/2)
-                                        + "," + (height/2) + ")");
+        .attr("transform", "translate(" + (pieWidth/2)
+            + "," + (pieHeight/2) + ")");
+
     //Draw arc paths
     arcs.append("path")
         .attr("id", function(d, i) {
@@ -1047,8 +1036,8 @@ function createPieChart(sorting) {
         .enter()
         .append("g")
         .attr("class", "valueLabel")
-        .attr("transform", "translate(" + (width/2)
-            + "," + (height/2) + ")");
+        .attr("transform", "translate(" + (pieWidth/2)
+            + "," + (pieHeight/2) + ")");
 
     //Labels in a separate group that is drawn after the paths, so that labels are drawn on top
     values.append("text")
@@ -1098,6 +1087,64 @@ function createPieChart(sorting) {
 
         })
         .style('display', function (d) { return d.visible ? null : "none"; });
+
+    //Create the legend --------------------------------
+    //Create a group for legend elements
+    var legendGroup = legendSvg.append("g")
+            .attr("id", "legendGroup");
+    var legend = legendGroup
+        .selectAll("g")
+        .data(pieObservations)
+        .enter().append("g")
+        .attr("transform", function(d, i) {
+            return "translate(0," + i * pieConfig.legendPerLabelHeight + ")";
+        });
+
+    //For each of the data create a filled rectangle (color index)
+    legend.append("rect")
+        .attr("width", pieConfig.legendColorRectWidth)
+        .attr("height", pieConfig.legendColorRectHeight)
+        .style("fill", function(d, i) {
+            return d3.schemeCategory20[colorIndex[i]%20];       //%20 is needed, otherwise i>20 -> black
+        });
+
+    //For each of the data create a text (free dimension value label)
+    legend.append("text")
+        .attr("x", pieConfig.legendColorRectWidth + 6)
+        .attr("y", pieConfig.legendColorRectHeight / 2)
+        .attr("dy", ".35em")
+        .attr("font-family" , pieConfig.legendTextFontFamily)
+        .attr("font-size", pieConfig.legendTextFontSize)
+        .attr("fill", pieConfig.legendTextFill)
+        //The legend text can't be selected so that a user could drag the legend up and down (if it doesn't fit)
+        .classed("unselectable", true)
+        .text(function(d,i ) { return d[CKEYS.dimLabel]; })
+        //Add mouseover functionality to legend text (highlight the appropriate pie area)
+        .on("mouseover", function(d, i) {
+            d3.select(this)
+                .attr("fill", 'orange');
+            d3.select("#path"+i)
+                .attr("fill", pieConfig.pieAreaHighlightColor);   //Change the color of the pie area to gain attention
+            d3.select('#pieText'+i)
+                .classed("pieTextVisible", true)
+                .attr("fill", pieConfig.valueTextHighlightColor);
+        })
+        .on("mouseout", function(d, i) {
+            d3.select(this)
+                .attr("fill", pieConfig.legendTextFill);
+            d3.select("#path"+i)
+                .attr("fill", d3.schemeCategory20[colorIndex[i]%20]);   //Restore the color of the pie area
+            d3.select('#pieText'+i)
+                .classed("pieTextVisible", false)                       //Restore the original visibility
+                .attr("fill", pieConfig.valueTextFill);                 //Restore the original color
+        });
+
+    //Set the legend's svg height equal to the group containing the legend text labels and rectangles
+    //  so that the div container can scroll. Do the same with the width
+    legendSvg.attr("height", legendGroup.node().getBBox().height);
+    legendSvg.attr("width", legendGroup.node().getBBox().width);
+    //------------------------------------------
+
 
 }
 

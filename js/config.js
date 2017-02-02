@@ -48,7 +48,7 @@ uiConfig = {
     'msg_refreshDataError'          : "Please retry pressing the Refresh button",
     'msg_loadingError'              : "Some error occurred, please reload page.",
     'msg_wrongChart'                : "Please chose another type of chart",
-    'footerSize'                    : 60,
+    'footerSize'                    : 40,
     'colorOGI'                      : '#e44690',         //the opengovintelligence magenta
     'chartTypes'                    : ['Bar chart', 'Pie chart', 'Pie chart sorted', 'Area chart'],
     'chartTypeInitiallySelected'    : 0
@@ -113,13 +113,12 @@ barConfig = {
 
 //pie chart configuration object
 pieConfig = {
-    'marginLeft'                        : 20,
-    'marginRight'                       : 20,
-    'marginTop'                         : 20,
-    'marginBottom'                      : 20,
+    'marginLeft'                        : 10,
+    'marginRight'                       : 10,
+    'marginTop'                         : 10,
+    'marginBottom'                      : 10,
     'pieChartMinimumHeight'             : 300,
-    'pieChartMinimumWidth'              : 300,   //excluding the legend
-    'legendDefaultWidth'                : 100,
+    //'pieChartMinimumWidth'            : 300,   //in Pie Chart width is dynamically set
     'valueTextFontFamily'               : 'sans-serif',
     'valueTextFontSize'                 : '12px',
     'valueTextFill'                     : 'white',
