@@ -1,16 +1,17 @@
 prop = {
-    //TODO Change that to the actual API address
-    'jsonqbAPIuri' : '***the actual JSON QB API implementation address***',
 
     //TODO Insert the actual data cube URI
-    'dataCubeURI' : '***the actual Data Cube URI***'
+    'dataCubeURI' : 'http://statistics.gov.scot/data/recorded-crime',
+    //'dataCubeURI' : 'http://statistics.gov.scot/data/earnings',
+    'graphQLendpoint' : 'http://localhost:8080/'
 };
 
 //Api Responses Json Keys
 ARJK = {
     'measures'          : 'measures',
-    'id'                : '@id',
-    'label'             : 'label',
+    'id'                : 'uri',
+    'label'             : 'enum_name',
+    'metadata_label'    : 'title',
     'dimensions'        : 'dimensions',
     'values'            : 'values',
     'dimension'         : 'dimension',
