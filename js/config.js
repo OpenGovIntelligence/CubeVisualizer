@@ -2,8 +2,10 @@ prop = {
 
     //TODO Insert the actual data cube URI
     'dataCubeURI' : 'http://statistics.gov.scot/data/recorded-crime',
+   //'dataCubeURI' : 'http://www.opengovintelligence.eu/pilots%23cso_ds',
     //'dataCubeURI' : 'http://statistics.gov.scot/data/earnings',
-    'graphQLendpoint' : 'http://localhost:8080/'
+    'graphQLendpoint' : 'http://localhost:8080/',
+    //'graphQLendpoint' : 'http://vmogi01.deri.ie:8022/'
 };
 
 //Api Responses Json Keys

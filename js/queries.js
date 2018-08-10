@@ -176,7 +176,9 @@ function generateData() {
 
     _observations = [];
     _rawObs.forEach(obs => {
-        if (obs["measure_type"] === _measures.measures[_measureSelected][ARJK.label]) {
+        //if (obs["measure_type"] === _measures.measures[_measureSelected][ARJK.label]) {
+        var obsMeasure = obs[_measures.measures[_measureSelected][ARJK.label].toLowerCase()];
+        if (obsMeasure !== null && obsMeasure !== "") {
             var respectsFilters = true;
             _dimensionsValues.forEach((dimFil, index) => {
                 // We exclude the free dimension
