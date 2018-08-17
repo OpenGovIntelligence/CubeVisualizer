@@ -21,6 +21,10 @@ body {
     color: #e44690;
 }
 
+.color_cso {
+    color: #1F4A86;
+}
+
 /* for the line separating the chart selector from the dims values */
 .line-separator{
     height:10px;
