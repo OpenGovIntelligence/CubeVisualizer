@@ -79,9 +79,8 @@ function refreshData() {
     removeErrorMessage(); // Remove error message if any
     spinnerOn();
 
-    getAggregatedCubeURI(prop.dataCubeURI)
-        .then(function(aggCubeURI){
-            getTableRow(aggCubeURI)
+    
+            getTableRow(prop.dataCubeURI)
                 .then(function(){
                     //Set the flag ("there is data")
                     _dataLoaded = true;
@@ -97,15 +96,6 @@ function refreshData() {
                     spinnerOff();
                     enableUserInputElements();
                 });
-        })
-        .fail(function(){
-            spinnerOff();
-            enableUserInputElements();
-            showErrorMessage(uiConfig.msg_refreshDataError);
-            //Make the refresh button enabled
-            $("#refreshButton").removeAttr("disabled");
-        });
-
 }
 
 //Disables all the selectors
@@ -1306,7 +1296,7 @@ function getDimensionValues(cubeURI, dimensions) {
                     } else {
                         //Store the dimValues objects with the same sequence as in _dimensions
                         //First it adds the All object at the [0] position of the array of values
-                        singleDimValues[ARJK.values].unshift(allValues);
+                        //singleDimValues[ARJK.values].unshift(allValues);
                         _dimensionsValues[it] = singleDimValues;
                     }
                 })
@@ -1333,7 +1323,7 @@ function getTableRow(aggCubeURI) {
     var queryData = {};
     queryData['dataset'] = encodeURI(aggCubeURI);
     //URI of the selected measure
-    queryData['measure'] = encodeURI(_measures[ARJK.measures][_measureSelected][ARJK.id]);
+    queryData['measure[]'] = encodeURI(_measures[ARJK.measures][_measureSelected][ARJK.id]);
 
     var row = []; //will hold the rows (can be more than one)
     //col[] is optional TODO future implementation

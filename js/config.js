@@ -1,9 +1,9 @@
 prop = {
     //TODO Change that to the actual API address
-    'jsonqbAPIuri' : '***the actual JSON QB API implementation address***',
+    'jsonqbAPIuri' : 'http://localhost:8082/',
 
     //TODO Insert the actual data cube URI
-    'dataCubeURI' : '***the actual Data Cube URI***'
+    'dataCubeURI' : 'http://www.opengovintelligence.eu/pilots#cso_ds'
 };
 
 //Api Responses Json Keys
