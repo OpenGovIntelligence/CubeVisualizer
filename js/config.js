@@ -1,6 +1,6 @@
 prop = {
     //TODO Change that to the actual API address
-    'jsonqbAPIuri' : 'http://localhost:8082/',
+    'jsonqbAPIuri' : 'http://losd.staging.derilinx.com:8082/',
 
     //TODO Insert the actual data cube URI
     'dataCubeURI' : 'http://www.opengovintelligence.eu/pilots#cso_ds'
@@ -49,7 +49,7 @@ uiConfig = {
     'msg_loadingError'              : "Some error occurred, please reload page.",
     'msg_wrongChart'                : "Please chose another type of chart",
     'footerSize'                    : 40,
-    'colorOGI'                      : '#e44690',         //the opengovintelligence magenta
+    'colorOGI'                      : '#1F4A86',         //the cso colour scheme
     'chartTypes'                    : ['Bar chart', 'Pie chart', 'Pie chart sorted', 'Area chart'],
     'chartTypeInitiallySelected'    : 0
 };
@@ -95,7 +95,7 @@ barConfig = {
     'barChartMinHeight'                 : 300,
     'barColor'                          : uiConfig.colorOGI,        //or e.g. "steelblue",
     'perLetterSpaceForYAxisLabels'      : 8,
-    'valueLabelFontSize'                : '11px',
+    'valueLabelFontSize'                : '14px',
     'valueLabelFontColor'               : "white",
     'valueLabelFontColor_whenExternal'  : "gray",
     'valueLabelYTransformation'         : 14,
