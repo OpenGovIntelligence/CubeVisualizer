@@ -3,7 +3,9 @@ prop = {
     'jsonqbAPIuri' : 'http://losd.staging.derilinx.com:8082/',
 
     //TODO Insert the actual data cube URI
-    'dataCubeURI' : 'http://www.opengovintelligence.eu/pilots#cso_ds'
+    // 'dataCubeURI' : 'http://ld.linked-open-statistics.org/data/HC55_ds';
+
+    'dataCubeURI' : getParameterByName('dataCubeURI')
 };
 
 //Api Responses Json Keys
@@ -131,3 +133,13 @@ pieConfig = {
     'legendPerLabelHeight'              : 15,
     'pieAreaHighlightColor'             : 'dimgrey'
 };
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
